@@ -26,6 +26,7 @@ async function validateMessage(body: any): Promise<string> {
     const data = await validateFramesPost(body);
     return data?.verifiedWalletAddress;
   }
+
   return validateFarcasterMessage(
     Buffer.from(body?.trustedData?.messageBytes || "", "hex")
   );
