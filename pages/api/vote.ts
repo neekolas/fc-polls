@@ -51,6 +51,7 @@ export default async function handler(
       try {
         identifier = await validateMessage(req.body);
       } catch (e) {
+        console.error(e);
         return res.status(400).send(`Failed to validate message: ${e}`);
       }
 
