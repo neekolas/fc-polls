@@ -118,7 +118,7 @@ export default async function handler(
           <meta property="fc:frame:button:1" content="${button1Text}">
           <meta property="fc:frame:button:2" content="Create your poll">
           <meta property="fc:frame:button:2:action" content="post_redirect">
-          <meta property="fc:frame:button:2:target" content=""${
+          <meta property="fc:frame:button:2:target" content="${
             process.env["HOST"]
           }/api/vote?id=${poll.id}&results=true&createPoll=true">
         </head>
