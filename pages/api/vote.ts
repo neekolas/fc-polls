@@ -114,13 +114,13 @@ export default async function handler(
             process.env["HOST"]
           }/api/vote?id=${poll.id}&voted=true&results=${
         results ? "false" : "true"
-      }">
+      }&foo=bar">
           <meta name="fc:frame:button:1" content="${button1Text}">
           <meta name="fc:frame:button:2" content="Create your poll">
           <meta name="fc:frame:button:2:action" content="post_redirect">
           <meta name="fc:frame:button:2:target" content=""${
             process.env["HOST"]
-          }/api/vote?id=${poll.id}&createPoll=true">
+          }/api/vote?id=${poll.id}&results=true&createPoll=true">
         </head>
         <body>
           <p>${
