@@ -108,17 +108,17 @@ export default async function handler(
           <title>Vote Recorded</title>
           <meta property="og:title" content="Vote Recorded">
           <meta property="og:image" content="${imageUrl}">
-          <meta name="fc:frame" content="vNext">
-          <meta name="fc:frame:image" content="${imageUrl}">
-          <meta name="fc:frame:post_url" content="${
+          <meta property="fc:frame" content="vNext">
+          <meta property="fc:frame:image" content="${imageUrl}">
+          <meta property="fc:frame:post_url" content="${
             process.env["HOST"]
           }/api/vote?id=${poll.id}&voted=true&results=${
         results ? "false" : "true"
-      }&foo=bar">
-          <meta name="fc:frame:button:1" content="${button1Text}">
-          <meta name="fc:frame:button:2" content="Create your poll">
-          <meta name="fc:frame:button:2:action" content="post_redirect">
-          <meta name="fc:frame:button:2:target" content=""${
+      }">
+          <meta property="fc:frame:button:1" content="${button1Text}">
+          <meta property="fc:frame:button:2" content="Create your poll">
+          <meta property="fc:frame:button:2:action" content="post_redirect">
+          <meta property="fc:frame:button:2:target" content=""${
             process.env["HOST"]
           }/api/vote?id=${poll.id}&results=true&createPoll=true">
         </head>
