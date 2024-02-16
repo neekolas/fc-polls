@@ -42,6 +42,7 @@ export default async function handler(
     try {
       const pollId = req.query["id"];
       const results = req.query["results"] === "true";
+      const createPoll = req.query["createPoll"] === "true";
       let voted = req.query["voted"] === "true";
       if (!pollId) {
         return res.status(400).send("Missing poll ID");
@@ -65,7 +66,7 @@ export default async function handler(
       voted = voted || !!voteExists;
 
       // Clicked create poll
-      if ((voted || results) && buttonId === 2) {
+      if (createPoll) {
         return res
           .status(302)
           .setHeader("Location", `${process.env["HOST"]}`)
@@ -117,6 +118,9 @@ export default async function handler(
           <meta name="fc:frame:button:1" content="${button1Text}">
           <meta name="fc:frame:button:2" content="Create your poll">
           <meta name="fc:frame:button:2:action" content="post_redirect">
+          <meta name="fc:frame:button:2:target" content=""${
+            process.env["HOST"]
+          }/api/vote?id=${poll.id}&createPoll=true">
         </head>
         <body>
           <p>${
