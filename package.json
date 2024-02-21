@@ -6,7 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@coinbase/onchainkit": "^0.8.1",
+    "@coinbase/onchainkit": "^0.8.2",
     "@farcaster/hub-nodejs": "^0.10.21",
     "@types/node": "20.11.0",
     "@types/react": "18.2.47",
