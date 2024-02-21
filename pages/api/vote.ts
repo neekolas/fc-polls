@@ -1,8 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Poll } from "@/app/types";
 import { kv } from "@vercel/kv";
-import { validateFramesPost } from "@xmtp/frames-validator";
 import { getSSLHubRpcClient, Message } from "@farcaster/hub-nodejs";
+import {
+  getXmtpFrameMessage,
+  isXmtpFrameRequest,
+} from "@coinbase/onchainkit/esm/xmtp";
 
 const HUB_URL = process.env["HUB_URL"] || "nemes.farcaster.xyz:2283";
 const client = getSSLHubRpcClient(HUB_URL);
@@ -22,9 +25,12 @@ async function validateFarcasterMessage(
 }
 
 async function validateMessage(body: any): Promise<string> {
-  if (body?.untrustedData?.walletAddress) {
-    const data = await validateFramesPost(body);
-    return data?.verifiedWalletAddress;
+  if (isXmtpFrameRequest(body)) {
+    const data = await getXmtpFrameMessage(body);
+    if (!data.isValid) {
+      throw new Error("Invalid message");
+    }
+    return data?.message.verifiedWalletAddress;
   }
 
   return validateFarcasterMessage(
