@@ -5,7 +5,7 @@ import { getSSLHubRpcClient, Message } from "@farcaster/hub-nodejs";
 import {
   getXmtpFrameMessage,
   isXmtpFrameRequest,
-} from "@coinbase/onchainkit/esm/xmtp";
+} from "@coinbase/onchainkit/xmtp";
 
 const HUB_URL = process.env["HUB_URL"] || "nemes.farcaster.xyz:2283";
 const client = getSSLHubRpcClient(HUB_URL);
