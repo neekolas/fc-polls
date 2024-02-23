@@ -47,6 +47,7 @@ export async function generateMetadata(
   const poll = await getPoll(id);
 
   const fcMetadata: Record<string, string> = {
+    "of:accepts:xmtp": "2024-02-01",
     "fc:frame": "vNext",
     "fc:frame:post_url": `${process.env["HOST"]}/api/vote?id=${id}`,
     "fc:frame:image": `${process.env["HOST"]}/api/image?id=${id}`,
