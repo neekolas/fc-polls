@@ -112,6 +112,7 @@ export default async function handler(
       <html>
         <head>
           <title>Vote Recorded</title>
+          <meta property="of:accepts:xmtp" content="2024-02-01">
           <meta property="og:title" content="Vote Recorded">
           <meta property="og:image" content="${imageUrl}">
           <meta property="fc:frame" content="vNext">
