@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { Poll } from "@/app/types";
-import { kv } from "@vercel/kv";
-import { getSSLHubRpcClient, Message } from "@farcaster/hub-nodejs";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import {Poll, POLL_EXPIRY} from "@/app/types";
+import {kv} from "@vercel/kv";
+import {getSSLHubRpcClient, Message} from "@farcaster/hub-nodejs";
 import {
   getXmtpFrameMessage,
   isXmtpFrameRequest,
@@ -30,7 +30,10 @@ async function validateMessage(body: any): Promise<string> {
     if (!data.isValid) {
       throw new Error("Invalid message");
     }
-    return data?.message.verifiedWalletAddress;
+    if (!data?.message) {
+      throw new Error("Invalid message");
+    }
+    return data?.message?.verifiedWalletAddress;
   }
 
   return validateFarcasterMessage(
