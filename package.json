@@ -5,6 +5,9 @@
     "build": "next build",
     "start": "next start"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@coinbase/onchainkit": "^0.35.8",
     "@farcaster/hub-nodejs": "^0.11.11",
