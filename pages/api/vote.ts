@@ -25,20 +25,38 @@ async function validateFarcasterMessage(
 }
 
 async function validateMessage(body: any): Promise<string> {
+  console.log("Starting validateMessage");
+  console.log("Received body:", body);
+
   if (isXmtpFrameRequest(body)) {
+    console.log("Message identified as XMTP frame");
     const data = await getXmtpFrameMessage(body);
+    console.log("getXmtpFrameMessage response:", data);
+
     if (!data.isValid) {
-      throw new Error("Invalid message");
+      console.error("XMTP frame validation failed:", data);
+      throw new Error("Invalid XMTP message");
     }
     if (!data?.message) {
-      throw new Error("Invalid message");
+      console.error("XMTP message is missing:", data);
+      throw new Error("Invalid XMTP message structure");
     }
-    return data?.message?.verifiedWalletAddress;
+    console.log("Returning verified wallet address:", data.message.verifiedWalletAddress);
+    return data.message.verifiedWalletAddress;
   }
 
-  return validateFarcasterMessage(
-    Buffer.from(body?.trustedData?.messageBytes || "", "hex")
-  );
+  console.log("Message identified as Farcaster");
+  const messageBytes = body?.trustedData?.messageBytes;
+  if (!messageBytes) {
+    console.error("Missing messageBytes for Farcaster validation");
+    throw new Error("Missing messageBytes");
+  }
+  try {
+    return validateFarcasterMessage(Buffer.from(messageBytes, "hex"));
+  } catch (e) {
+    console.error("Farcaster message validation error:", e);
+    throw new Error("Farcaster message validation failed");
+  }
 }
 
 export default async function handler(
