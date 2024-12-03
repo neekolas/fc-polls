@@ -30,10 +30,8 @@ async function validateMessage(body: any): Promise<string> {
     if (!data.isValid) {
       throw new Error("Invalid message");
     }
-    if (!data?.message) {
-      throw new Error("Invalid message");
-    }
-    return data?.message?.verifiedWalletAddress;
+
+    return data?.message.verifiedWalletAddress;
   }
 
   return validateFarcasterMessage(
