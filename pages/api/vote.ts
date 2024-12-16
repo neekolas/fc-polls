@@ -1,11 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import {Poll, POLL_EXPIRY} from "@/app/types";
-import {kv} from "@vercel/kv";
-import {getSSLHubRpcClient, Message} from "@farcaster/hub-nodejs";
-import {
-  getXmtpFrameMessage,
-  isXmtpFrameRequest,
-} from "@coinbase/onchainkit/xmtp";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { Poll, POLL_EXPIRY } from "@/app/types";
+import { kv } from "@vercel/kv";
+import { getSSLHubRpcClient, Message } from "@farcaster/hub-nodejs";
+import { XmtpValidator, validateFramesPost } from "@xmtp/frames-validator";
+
+type XmtpValidatorEnv = Parameters<typeof validateFramesPost>[1]
 
 const HUB_URL = process.env["HUB_URL"] || "nemes.farcaster.xyz:2283";
 const client = getSSLHubRpcClient(HUB_URL);
@@ -24,9 +23,10 @@ async function validateFarcasterMessage(
   throw new Error("Failed to validate message");
 }
 
-async function validateMessage(body: any): Promise<string> {
-  if (isXmtpFrameRequest(body)) {
-    const data = await getXmtpFrameMessage(body);
+async function validateMessage(body: any, env?: XmtpValidatorEnv): Promise<string> {
+  const validator = new XmtpValidator();
+  if (validator.isSupported(body)) {
+    const data = await validator.validate(body, env);
     if (!data.isValid) {
       throw new Error("Invalid message");
     }
@@ -48,6 +48,7 @@ export default async function handler(
     // For example, let's assume you receive an option in the body
     try {
       const pollId = req.query["id"];
+      const env = req.query["env"] ?? "production";
       const results = req.query["results"] === "true";
       const createPoll = req.query["createPoll"] === "true";
       let voted = req.query["voted"] === "true";
@@ -55,9 +56,13 @@ export default async function handler(
         return res.status(400).send("Missing poll ID");
       }
 
+      if (typeof env !== 'string' || !['local', 'dev', 'production'].includes(env)) {
+        return res.status(400).send("Invalid environment");
+      }
+
       let identifier: string;
       try {
-        identifier = await validateMessage(req.body);
+        identifier = await validateMessage(req.body, env as XmtpValidatorEnv);
       } catch (e) {
         console.error(e);
         return res.status(400).send(`Failed to validate message: ${e}`);
@@ -120,7 +125,7 @@ export default async function handler(
           <meta property="fc:frame:image" content="${imageUrl}">
           <meta property="fc:frame:post_url" content="${
             process.env["HOST"]
-          }/api/vote?id=${poll.id}&voted=true&results=${
+          }/api/vote?id=${poll.id}&env=${env}&voted=true&results=${
         results ? "false" : "true"
       }">
           <meta property="fc:frame:button:1" content="${button1Text}">
@@ -128,7 +133,7 @@ export default async function handler(
           <meta property="fc:frame:button:2:action" content="post_redirect">
           <meta property="fc:frame:button:2:target" content="${
             process.env["HOST"]
-          }/api/vote?id=${poll.id}&results=true&createPoll=true">
+          }/api/vote?id=${poll.id}&env=${env}&results=true&createPoll=true">
         </head>
         <body>
           <p>${
