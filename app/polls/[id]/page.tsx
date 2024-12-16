@@ -44,12 +44,13 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   // read route params
   const id = params.id;
+  const env = searchParams.env ?? "production";
   const poll = await getPoll(id);
 
   const fcMetadata: Record<string, string> = {
     "of:accepts:xmtp": "2024-02-01",
     "fc:frame": "vNext",
-    "fc:frame:post_url": `${process.env["HOST"]}/api/vote?id=${id}`,
+    "fc:frame:post_url": `${process.env["HOST"]}/api/vote?id=${id}&env=${env}`,
     "fc:frame:image": `${process.env["HOST"]}/api/image?id=${id}`,
   };
   [poll.option1, poll.option2, poll.option3, poll.option4]
