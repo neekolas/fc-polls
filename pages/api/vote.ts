@@ -26,12 +26,8 @@ async function validateFarcasterMessage(
 async function validateMessage(body: any, env?: XmtpValidatorEnv): Promise<string> {
   const validator = new XmtpValidator();
   if (validator.isSupported(body)) {
-    const data = await validator.validate(body, env);
-    if (!data.isValid) {
-      throw new Error("Invalid message");
-    }
-
-    return data?.message.verifiedWalletAddress;
+    const data = await validateFramesPost(body, env);
+    return data.verifiedWalletAddress;
   }
 
   return validateFarcasterMessage(
